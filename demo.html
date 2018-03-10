@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset=utf-8 />
+  <title>Europe &amp; Human Trafficking</title>
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bree+Serif">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+
+
+
+  <style>
+    /* custom styles here */
+
+    h1 {
+      display: inline-block;
+      margin-right: 20px;
+      font-family: "Bree Serif", serif;
+      color: #b30000;
+    }
+
+    body {
+      background: #f5f5f5;
+      font-family: "Raleway", serif;
+      color: #e34a33;
+    }
+
+    .container {
+      margin-top: 3rem;
+    }
+
+    #map {
+      border: 2px solid #d3d3d3;
+      width: 960px;
+      height: 540px;
+      margin-bottom: 36px;
+    }
+  </style>
+</head>
+
+<body>
+
+    <div id="map"></div>
+
+
+    <script src="https://d3js.org/d3-dsv.v1.min.js"></script>
+    <script src="https://d3js.org/d3-fetch.v1.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"></script>
+
+    <!-- load animation tweening lib requirement for CanvasFlowMapLayer -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/17.2.0/Tween.min.js"></script>
+    <script src="js/CanvasFlowmapLayer.js"></script>
+    <script>
+
+        // load CSV data
+        d3.csv('data/data.csv').then(dataReady)
+
+        function dataReady(data) {
+          
+          // create a new GeoJSON feature collection
+          var geojson = {
+            "type": "FeatureCollection",
+            "features": []
+          }
+
+          // loop through the CSV data to build GeoJSON
+          data.forEach(function(datum) {
+            
+            // create a new Point feature
+            var feature = {
+              "type": "Feature",
+              "geometry": {
+                "type": "Point",
+                "coordinates": [+datum.source_lon, +datum.source_lat]
+              },
+              "properties": {
+                "origin_id": datum.source_ISO,
+                "origin_country": datum.source_name,
+                "origin_lon": +datum.source_lon,
+                "origin_lat": +datum.source_lat,
+                "destination_id": datum.dest_ISO,
+                "destination_lon": +datum.dest_lon,
+                "destination_lat": +datum.dest_lat, 
+                "weight": +datum.weight
+              }
+            }
+
+            // push new feature to GeoJSON collection
+            geojson.features.push(feature)
+
+          })
+          
+          // GeoJSON structure is now built
+          console.log(geojson)
+
+          var options = {
+            center: [48.809, 14.257],
+            zoom: 4
+          }
+
+          var map = L.map('map', options)
+
+          var OpenStreetMap_Mapnik = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/light_all/{z}/{x}/{y}.png', {
+          }).addTo(map)
+
+          // L.geoJson(geojson).addTo(map)
+
+          var flowLayer = L.canvasFlowmapLayer(geojson, {
+            style: function(feature) {
+              return {
+                weight: feature.properties.weight * .2
+              }
+            },
+            originAndDestinationFieldIds: {
+              originUniqueIdField: 'origin_id',
+              originGeometry: {
+                x: 'origin_lon',
+                y: 'origin_lat'
+              },
+            destinationUniqueIdField: 'destination_id',
+            destinationGeometry: {
+                x: 'destination_lon',
+                y: 'destination_lat'
+              }
+            },
+            // some custom options
+            pathDisplayMode: 'selection',
+            animationStarted: true,
+            animationEasingFamily: 'Cubic',
+            animationEasingType: 'In',
+            animationDuration: 2000
+          }).addTo(map);
+
+          flowLayer.on('click', function(e) {
+            if (e.sharedOriginFeatures.length) {
+              flowLayer.selectFeaturesForPathDisplay(e.sharedOriginFeatures, 'SELECTION_NEW');
+            }
+            if (e.sharedDestinationFeatures.length) {
+              flowLayer.selectFeaturesForPathDisplay(e.sharedDestinationFeatures, 'SELECTION_NEW');
+            }
+          });
+
+         // select BG first and show path
+         flowLayer.selectFeaturesForPathDisplayById('origin_id', "BG", true, 'SELECTION_NEW');
+
+
+        }
+    </script>
+</body>
+</html>
