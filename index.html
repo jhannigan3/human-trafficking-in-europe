@@ -73,12 +73,12 @@
           <input type="radio" id=""
             name="contact" value="gdp">
           <label for="gdp">GDP Layer</label>
-      
+
           <input type="radio" id=""
             name="contact" value="flow">
           <label for="flowmap">FLowmap</label>
         </div>
-      </form>  
+      </form>
   </div> -->
 
 
@@ -107,12 +107,12 @@
       var layerMap = {
         gdp: gdpLayer,
         flow: flowLayer
-      } 
- 
+      }
+
     // load CSV data
     var trafficData = d3.csv('data/Trafficking_Europe.csv')
     var gdpData = d3.csv('data/PopGDP.csv')
-    
+
     Promise.all([trafficData, gdpData]).then(dataReady)
 
     function dataReady(data) {
@@ -163,7 +163,7 @@
         style: function(feature) {
           return {
             weight: feature.properties.weight * .2,
-            fillOpacity: 0 
+            fillOpacity: 0
           }
         },
         originAndDestinationFieldIds: {
@@ -198,8 +198,6 @@
       // select BG first and show path
       flowLayer.selectFeaturesForPathDisplayById('origin_id', "BG", true, 'SELECTION_NEW');
     }
-<<<<<<< HEAD
-=======
 
     function drawGDPMap(data) {
 
@@ -265,13 +263,13 @@
       var layerControl = {
         "gdp": gdpLayer,
         "flow": flowLayer
-      } 
+      }
 
       L.control.layers(layerControl, {
         // collapsed: true
       }).addTo(map);
 
-    
+
       // $("#ui input").change(function() {
       //   var selection = this.value
       //   if(selection === 'gdp') {
@@ -286,8 +284,6 @@
 
     }
 
->>>>>>> 4c2f601538977b8798c00eb82360c168f86052b0
-    
   </script>
 </body>
 
