@@ -246,7 +246,7 @@
         }
       });
       // select BG first and show path
-      flowLayer.selectFeaturesForPathDisplayById('origin_id', "BG", true, 'SELECTION_NEW');
+      flowLayer.selectFeaturesForPathDisplayById('origin_id', "RU", true, 'SELECTION_NEW');
     }
     var mygallery = new simpleGallery({
       wrapperid: "simplegallery1", //ID of main gallery container,
@@ -296,7 +296,7 @@
       gdpLayer = L.geoJson(geojson, {
         pointToLayer: function(feature, ll) {
           return L.circleMarker(ll, {
-            color: "orange",
+            color: "cyan",
             weight: 1,
             fillOpacity: 0,
             radius: calcRadius(feature.properties.GDP)
@@ -306,7 +306,7 @@
       L.geoJson(geojson, {
         pointToLayer: function(feature, ll) {
           return L.circleMarker(ll, {
-            color: "green",
+            color: "red",
             weight: 1,
             fillOpacity: 0,
             radius: calcRadius(feature.properties.Number_Slavery)
