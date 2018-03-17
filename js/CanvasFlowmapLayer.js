@@ -269,7 +269,7 @@
     },
 
     bringToBack: function() {
-      // call the L.GeoJSON bringToBack method to manage the point graphics    
+      // call the L.GeoJSON bringToBack method to manage the point graphics
       L.GeoJSON.prototype.bringToBack.call(this);
 
       // keep the animation canvas element on top of the main canvas element

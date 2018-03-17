@@ -29,7 +29,7 @@
 
     #side-col {
       position: absolute;
-      width: 30%;
+      width: 25%;
       left: 18px;
       top: 100px;
       bottom: 20px;
@@ -63,9 +63,22 @@
   <div id="side-col">
     <h1>Europe &amp; Human Trafficking</h1>
     <h2>Click on a country to see which other countries in Europe that country trafficks to.</h2>
-    <p>Turnip greens yarrow ricebean rutabaga endive cauliflower sea lettuce kohlrabi amaranth water spinach avocado daikon napa cabbage asparagus winter purslane kale. Celery potato scallion desert raisin horseradish spinach carrot soko. Lotus root water spinach fennel kombu maize bamboo shoot green bean swiss chard seakale pumpkin onion chickpea gram corn pea. Brussels sprout coriander water chestnut gourd swiss chard wakame kohlrabi beetroot carrot watercress. Corn amaranth salsify bunya nuts nori azuki bean chickweed potato bell pepper artichoke.</p>
+    <p>Turnip greens yarrow ricebean rutabaga endive cauliflower sea lettuce kohlrabi amaranth water spinach avocado daikon napa cabbage asparagus winter purslane kale. Celery potato scallion desert raisin horseradish spinach carrot soko. Lotus root water
+      spinach fennel kombu maize bamboo shoot green bean swiss chard seakale pumpkin onion chickpea gram corn pea. Brussels sprout coriander water chestnut gourd swiss chard wakame kohlrabi beetroot carrot watercress. Corn amaranth salsify bunya nuts
+      nori azuki bean chickweed potato bell pepper artichoke.</p>
+
   </div>
   <div id="map"></div>
+
+  <div id='legend' class='bg-gray-dark round px12 py12 relative'>
+    <h3 class='txt-bold mb12 w180'>Number of trafficking victims & GDP PPP</h3>
+    <div class='legend-circles relative w180'>
+      <div class="legend-large border border--gray-light absolute"></div>
+      <div class="legend-small border border--gray-light absolute"></div>
+      <h3><div class="legend-large-label txt-m absolute"></div></h3>
+      <h3><div class="legend-small-label txt-m absolute"></div></h3>
+    </div>
+  </div>
 
   <!-- <div id="ui">
     <form>
@@ -91,23 +104,25 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/17.2.0/Tween.min.js"></script>
   <script src="js/CanvasFlowmapLayer.js"></script>
   <script>
+    var options = {
+      zoomSnap: 1,
+      center: [52.805, 1],
+      zoom: 4,
+      minZoom: 3,
+      maxZoom: 6,
+    }
+    var map = L.map('map', options)
+    var OpenStreetMap_Mapnik = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
+      // attribute here
+    }).addTo(map)
 
-      var options = {
-        center: [52.805, 14.257],
-        zoom: 4.4
-      }
-      var map = L.map('map', options)
-      var OpenStreetMap_Mapnik = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
-        // attribute here
-      }).addTo(map)
+    var flowLayer,
+      gdpLayer
 
-      var flowLayer,
-          gdpLayer
-
-      var layerMap = {
-        gdp: gdpLayer,
-        flow: flowLayer
-      }
+    var layerMap = {
+      gdp: gdpLayer,
+      flow: flowLayer
+    }
 
     // load CSV data
     var trafficData = d3.csv('data/Trafficking_Europe.csv')
@@ -118,24 +133,21 @@
     function dataReady(data) {
 
       var trafficData = data[0],
-          gdpData = data[1]
-
+        gdpData = data[1]
 
       drawGDPMap(gdpData)
       drawFlowMap(trafficData)
       // makeUI()
-
     }
 
     function drawFlowMap(data) {
-       // create a new GeoJSON feature collection
-       var geojson = {
+      // create a new GeoJSON feature collection
+      var geojson = {
         "type": "FeatureCollection",
         "features": []
       }
       // loop through the CSV data to build GeoJSON
       data.forEach(function(datum) {
-
         // create a new Point feature
         var feature = {
           "type": "Feature",
@@ -157,7 +169,6 @@
         // push new feature to GeoJSON collection
         geojson.features.push(feature)
       })
-
       // L.geoJson(geojson).addTo(map)
       flowLayer = L.canvasFlowmapLayer(geojson, {
         style: function(feature) {
@@ -185,7 +196,6 @@
         animationEasingType: 'In',
         animationDuration: 2000
       }).addTo(map)
-
       flowLayer.on('click', function(e) {
         if (e.sharedOriginFeatures.length) {
           flowLayer.selectFeaturesForPathDisplay(e.sharedOriginFeatures, 'SELECTION_NEW');
@@ -194,21 +204,17 @@
           flowLayer.selectFeaturesForPathDisplay(e.sharedDestinationFeatures, 'SELECTION_NEW');
         }
       });
-
       // select BG first and show path
       flowLayer.selectFeaturesForPathDisplayById('origin_id', "BG", true, 'SELECTION_NEW');
     }
 
     function drawGDPMap(data) {
-
       // create a new GeoJSON feature collection
       var geojson = {
         "type": "FeatureCollection",
         "features": []
       }
-
       data.forEach(function(datum) {
-
         // create a new Point feature
         var feature = {
           "type": "Feature",
@@ -218,11 +224,8 @@
           },
           "properties": datum
         }
-
         geojson.features.push(feature);
-
       }) // end forEach loop
-
       gdpLayer = L.geoJson(geojson, {
         pointToLayer: function(feature, ll) {
           return L.circleMarker(ll, {
@@ -231,10 +234,8 @@
             fillOpacity: 0,
             radius: calcRadius(feature.properties.GDP)
           })
-
         }
       }).addTo(map)
-
       L.geoJson(geojson, {
         pointToLayer: function(feature, ll) {
           return L.circleMarker(ll, {
@@ -243,33 +244,46 @@
             fillOpacity: 0,
             radius: calcRadius(feature.properties.Number_Slavery)
           })
-
         }
+        //Add tooltip?
+        /*  onEachFeature: function(feature, ll) {
+
+            layer.bindTooltip(feature.properties.Country_Name);
+          }
+          // when mousing over a layer
+          layer.on('mouseover', function() {
+
+            // change the stroke color and bring that element to the front
+            layer.setStyle({
+              color: '#ff6e00'
+            }).bringToFront();
+          });
+
+          // on mousing off layer
+          layer.on('mouseout', function() {
+
+            // reset the layer style to its original stroke color
+            layer.setStyle({
+              color: '#dddddd'
+            });
+          });
+        }*/
       }).addTo(map)
-
-
     }
 
-
     function calcRadius(val) {
-
       var radius = Math.sqrt(val / Math.PI);
-      return radius * .3;
-
+      return radius * .15;
     }
 
     function makeUI() {
-
       var layerControl = {
         "gdp": gdpLayer,
         "flow": flowLayer
       }
-
       L.control.layers(layerControl, {
         // collapsed: true
       }).addTo(map);
-
-
       // $("#ui input").change(function() {
       //   var selection = this.value
       //   if(selection === 'gdp') {
@@ -280,10 +294,7 @@
       //     map.addLayer(flowLayer)
       //   }
       // })
-
-
     }
-
   </script>
 </body>
 
