@@ -10,45 +10,11 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bree+Serif">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+  <link rel="stylesheet" type="text/css" href="slick/slick.css" /> // Add the new slick-theme.css if you want the default styling
+  <link rel="stylesheet" type="text/css" href="slick/slick-theme.css" />
 
   <link rel="stylesheet" href="simplegallery.css" />
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-  <script src="jquery.touchSwipe.min.js"></script>
 
-  <script type="text/javascript" src="simplegallery.js">
-    /***********************************************
-     * Simple Controls Gallery- (c) Dynamic Drive DHTML code library (www.dynamicdrive.com)
-     * Please keep this notice intact
-     * Visit Dynamic Drive at http://www.dynamicdrive.com/ for this script and 100s more
-     ***********************************************/
-    var mygallery = new simpleGallery({
-      wrapperid: "simplegallery1", //ID of main gallery container,
-      dimensions: [250, 180], //width/height of gallery in [pixels, pixels] or ['percentage%', pixels]
-      imagearray: [
-        ["images/Stop.jpg"],
-        ["images/Types.jpg"],
-        ["images/Walk.jpg"],
-        ["images/Branded.jpg"],
-        ["images/30Seconds.jpg"],
-        ["images/MouthCover.jpg"],
-        ["images/NotForSale.jpg"],
-        ["images/Tied.jpg"],
-      ],
-      autoplay: [true, 2500, 2], //[auto_play_boolean, delay_btw_slide_millisec, cycles_before_stopping_int]
-      persist: false,
-      scaleimage: 'both', //valid values are 'both', 'width', or 'none'
-      fadeduration: 500, //transition duration (milliseconds)
-      oninit: function() { //event that fires when gallery has initialized/ ready to run
-      },
-      onslide: function(curslide, i) { //event that fires after each slide is shown
-        //curslide: returns DOM reference to current slide's DIV (ie: try alert(curslide.innerHTML)
-        //i: integer reflecting current image within collection being shown (0=1st image, 1=2nd etc)
-      }
-    })
-  </script>
-
-  <script type="text/javascript">
-  </script>
   <style>
     /* custom styles here */
 
@@ -93,25 +59,44 @@
       width: 120px;
       height: 130px;
     }
+
+    .legend-large,
+    .legend-small {
+      border-radius: 50%;
+    }
+
+    hr.small,
+    hr.large {
+      width: 83px;
+      position: absolute;
+      top: -8px;
+      left: 55px;
+      border: 1px dashed #ccc;
+      /* overwrite assembly.css rule */
+      margin-top: 8px;
+      /* overwrite assembly.css rule */
+    }
   </style>
 </head>
 
 <body>
-
   <div id="side-col">
     <h1>Europe &amp; Human Trafficking</h1>
     <h2>Click on a country to see which other countries in Europe that country trafficks to.</h2>
     <p>Turnip greens yarrow ricebean rutabaga endive cauliflower sea lettuce kohlrabi amaranth water spinach avocado daikon napa cabbage asparagus winter purslane kale. Celery potato scallion desert raisin horseradish spinach carrot soko. Lotus root water
       spinach fennel kombu maize bamboo shoot green bean swiss chard seakale pumpkin onion chickpea gram corn pea. Brussels sprout coriander water chestnut gourd swiss chard wakame kohlrabi beetroot carrot watercress. Corn amaranth salsify bunya nuts
       nori azuki bean chickweed potato bell pepper artichoke.</p>
-    <div id="simplegallery1" class="simplegallery"></div>
+    <div class="your-class">
+      <div>your content</div>
+      <div>your content</div>
+    </div>
   </div>
   </div>
 
   <div id="map"></div>
 
   <div id='legend' class='bg-gray-dark round px12 py12 relative'>
-    <h3 class='txt-bold mb12 w180'>Number of trafficking victims & GDP PPP</h3>
+    <h3 class='txt-bold mb12 w180'>Number of trafficking victims &amp; GDP PPP</h3>
     <div class='legend-circles relative w180'>
       <div class="legend-large border border--gray-light absolute"></div>
       <div class="legend-small border border--gray-light absolute"></div>
@@ -126,7 +111,6 @@
           <input type="radio" id=""
             name="contact" value="gdp">
           <label for="gdp">GDP Layer</label>
-
           <input type="radio" id=""
             name="contact" value="flow">
           <label for="flowmap">FLowmap</label>
@@ -139,10 +123,18 @@
   <script src="https://d3js.org/d3-fetch.v1.min.js"></script>
   <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"></script>
   <script src="https://code.jquery.com/jquery-3.3.1.slim.js"></script>
+  <script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+  <script type="text/javascript" src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+  <script type="text/javascript" src="slick/slick.min.js"></script>
 
   <!-- load animation tweening lib requirement for CanvasFlowMapLayer -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/17.2.0/Tween.min.js"></script>
   <script src="js/CanvasFlowmapLayer.js"></script>
+  <!-- <script src="js/jquery.touchSwipe.min.js"></script>
+  <script src="js/simplegallery.js"></script> -->
+
+
+
   <script>
     var options = {
       zoomSnap: 1,
@@ -155,27 +147,20 @@
     var OpenStreetMap_Mapnik = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
       // attribute here
     }).addTo(map)
-
     var flowLayer,
       gdpLayer
-
     var layerMap = {
       gdp: gdpLayer,
       flow: flowLayer
     };
-
-
     // load CSV data
     var trafficData = d3.csv('data/Trafficking_Europe.csv')
     var gdpData = d3.csv('data/PopGDP.csv')
-
     Promise.all([trafficData, gdpData]).then(dataReady)
 
     function dataReady(data) {
-
       var trafficData = data[0],
         gdpData = data[1]
-
       drawGDPMap(gdpData)
       drawFlowMap(trafficData)
       // makeUI()
@@ -210,6 +195,7 @@
         // push new feature to GeoJSON collection
         geojson.features.push(feature)
       })
+
       // L.geoJson(geojson).addTo(map)
       flowLayer = L.canvasFlowmapLayer(geojson, {
         style: function(feature) {
@@ -248,32 +234,6 @@
       // select BG first and show path
       flowLayer.selectFeaturesForPathDisplayById('origin_id', "RU", true, 'SELECTION_NEW');
     }
-    var mygallery = new simpleGallery({
-      wrapperid: "simplegallery1", //ID of main gallery container,
-      dimensions: [362, 210], //width/height of gallery in [pixels, pixels] or ['percentage%', pixels]
-      imagearray: [
-        ["images/Stop.jpg"],
-        ["images/Types.jpg"],
-        ["images/Walk.jpg"],
-        ["images/Branded.jpg"],
-        ["images/30Seconds.jpg"],
-        ["images/MouthCover.jpg"],
-        ["images/NotForSale.jpg"],
-        ["images/Tied.jpg"],
-      ],
-      autoplay: [true, 2500, 2], //[auto_play_boolean, delay_btw_slide_millisec, cycles_before_stopping_int]
-      persist: false,
-      scaleimage: 'both', //valid values are 'both', 'width', or 'none'
-      fadeduration: 500, //transition duration (milliseconds)
-      oninit: function() { //event that fires when gallery has initialized/ ready to run
-        //Keyword "this": references current gallery instance (ie: try this.navigate("play/pause")
-      },
-      onslide: function(curslide, i) { //event that fires after each slide is shown
-        //Keyword "this": references current gallery instance (ie: try this.navigate("play/pause")
-        //curslide: returns DOM reference to current slide's DIV (ie: try alert(curslide.innerHTML)
-        //i: integer reflecting current image within collection being shown (0=1st image, 1=2nd etc)
-      }
-    })
 
     function drawGDPMap(data) {
       // create a new GeoJSON feature collection
@@ -311,30 +271,24 @@
             fillOpacity: 0,
             radius: calcRadius(feature.properties.Number_Slavery)
           })
-        }
-        //Add tooltip?
-        /*  onEachFeature: function(feature, ll) {
-
-            layer.bindTooltip(feature.properties.Country_Name);
-          }
+        },
+        onEachFeature: function(feature, layer) {
+          layer.bindTooltip(feature.properties.County_Name);
           // when mousing over a layer
           layer.on('mouseover', function() {
-
             // change the stroke color and bring that element to the front
             layer.setStyle({
               color: '#ff6e00'
             }).bringToFront();
           });
-
           // on mousing off layer
           layer.on('mouseout', function() {
-
             // reset the layer style to its original stroke color
             layer.setStyle({
               color: '#dddddd'
             });
           });
-        }*/
+        }
       }).addTo(map)
     }
 
@@ -351,6 +305,145 @@
       L.control.layers(layerControl, {
         // collapsed: true
       }).addTo(map);
+
+
+      function drawLegend(data) {
+        // loop through all features (i.e., the schools)
+        var dataValues = data.features.map(function(numbers) {
+          // for each grade in a school
+          for (var slavery in PopGDP.properties[Number_Slavery]) {
+            // shorthand to each value
+            var value = PopGDP.properties[GDP];
+            // if the value can be converted to a number
+            if (+value) {
+              //return the value to the array
+              return +value;
+            }
+            showLegend = true; // default value showing the legend
+
+            var toggleLegend = function() {
+              if (showLegend === true) {
+                /* use jquery to select your DOM elements that has the class 'legend' */
+                $('.legend').hide();
+                showLegend = false;
+              } else {
+                $('.legend').show();
+                showLegend = true;
+              }
+            }
+
+          }
+        });
+        // verify your results!
+        console.log(dataValues);
+        // sort our array
+        var sortedValues = dataValues.sort(function(a, b) {
+          return b - a;
+        });
+
+        // round the highest number and use as our large circle diameter
+        var maxValue = Math.round(sortedValues[0] / 1000) * 1000;
+        // create Leaflet control for the legend
+        var legendControl = L.control({
+          position: 'bottomright'
+        });
+        // calc the diameters
+        var largeDiameter = calcRadius(maxValue) * 2,
+          smallDiameter = largeDiameter / 2;
+
+        // select our circles container and set the height
+        $(".legend-circles").css('height', largeDiameter.toFixed());
+
+        // set width and height for large circle
+        $('.legend-large').css({
+          'width': largeDiameter.toFixed(),
+          'height': largeDiameter.toFixed()
+        });
+        // set width and height for small circle and position
+        $('.legend-small').css({
+          'width': smallDiameter.toFixed(),
+          'height': smallDiameter.toFixed(),
+          'top': largeDiameter - smallDiameter,
+          'left': smallDiameter / 2
+        })
+
+        // label the max and median value
+        $(".legend-large-label").html(maxValue.toLocaleString());
+        $(".legend-small-label").html((maxValue / 2).toLocaleString());
+
+        // adjust the position of the large based on size of circle
+        $(".legend-large-label").css({
+          'top': -11,
+          'left': largeDiameter + 30,
+        });
+
+        // adjust the position of the large based on size of circle
+        $(".legend-small-label").css({
+          'top': smallDiameter - 11,
+          'left': largeDiameter + 30
+        });
+
+
+        // insert a couple hr elements and use to connect value label to top of each circle
+        $("<hr class='large'>").insertBefore(".legend-large-label")
+        $("<hr class='small'>").insertBefore(".legend-small-label").css('top', largeDiameter - smallDiameter - 8);
+
+        // when the control is added to the map
+        legendControl.onAdd = function(map) {
+
+          // select the legend using id attribute of legend
+          var legend = L.DomUtil.get("legend");
+
+          // disable scroll and click functionality
+          L.DomEvent.disableScrollPropagation(legend);
+          L.DomEvent.disableClickPropagation(legend);
+
+          // return the selection
+          return legend;
+
+        }
+
+
+        legendControl.addTo(map);
+      }
+
+
+    /*  $(document).ready(function() {
+        $('.responsive').slick({
+          dots: true,
+          infinite: false,
+          speed: 300,
+          slidesToShow: 4,
+          slidesToScroll: 4,
+          responsive: [{
+              breakpoint: 1024,
+              settings: {
+                slidesToShow: 3,
+                slidesToScroll: 3,
+                infinite: true,
+                dots: true
+              }
+            },
+            {
+              breakpoint: 600,
+              settings: {
+                slidesToShow: 2,
+                slidesToScroll: 2
+              }
+            },
+            {
+              breakpoint: 480,
+              settings: {
+                slidesToShow: 1,
+                slidesToScroll: 1
+              }
+            }
+            // You can unslick at a given breakpoint now by adding:
+            // settings: "unslick"
+            // instead of a settings object
+          ]
+        });
+      });;
       // $("#ui input").change(function() {
       //   var selection = this.value
       //   if(selection === 'gdp') {
@@ -360,7 +453,7 @@
       //     map.removeLayer(gdpLayer)
       //     map.addLayer(flowLayer)
       //   }
-      // })
+      // })*/
     }
   </script>
 </body>
