@@ -178,7 +178,7 @@
         gdpData = data[1]
 
       drawGDPMap(gdpData)
-      drawFlowMap(trafficData)
+      // drawFlowMap(trafficData)
       // makeUI()
     }
 
@@ -237,8 +237,10 @@
         animationEasingFamily: 'Cubic',
         animationEasingType: 'In',
         animationDuration: 2000
-      }).addTo(map)
+      })
+      
       flowLayer.on('click', function(e) {
+        console.log(e)
         if (e.sharedOriginFeatures.length) {
           flowLayer.selectFeaturesForPathDisplay(e.sharedOriginFeatures, 'SELECTION_NEW');
         }
@@ -246,8 +248,8 @@
           flowLayer.selectFeaturesForPathDisplay(e.sharedDestinationFeatures, 'SELECTION_NEW');
         }
       });
-      // select BG first and show path
-      flowLayer.selectFeaturesForPathDisplayById('origin_id', "RU", true, 'SELECTION_NEW');
+      // // select BG first and show path
+      // flowLayer.selectFeaturesForPathDisplayById('origin_id', "RU", true, 'SELECTION_NEW');
     }
   
 
@@ -257,6 +259,7 @@
         "type": "FeatureCollection",
         "features": []
       }
+
       data.forEach(function(datum) {
         // create a new Point feature
         var feature = {
@@ -267,20 +270,25 @@
           },
           "properties": datum
         }
-        geojson.features.push(feature);
+        geojson.features.push(feature)
       }) // end forEach loop
+      
       gdpLayer = L.geoJson(geojson, {
+        
         pointToLayer: function(feature, ll) {
+          
           return L.circleMarker(ll, {
             color: "cyan",
             weight: 1,
             fillOpacity: 0,
             radius: calcRadius(feature.properties.GDP)
           })
-        }
-      }).addTo(map)
-      L.geoJson(geojson, {
 
+        }
+
+      }).addTo(map)
+
+      L.geoJson(geojson, {
         pointToLayer: function(feature, ll) {
           return L.circleMarker(ll, {
             color: "red",
@@ -290,24 +298,10 @@
           })
         },
         onEachFeature: function(feature, layer) {
-          layer.bindTooltip(feature.properties.Country_Name);
-          // when mousing over a layer
-          layer.on('mouseover', function() {
-
-            // change the stroke color and bring that element to the front
-            layer.setStyle({
-              color: '#ff6e00'
-            }).bringToFront();
-          });
-
-          // on mousing off layer
-          layer.on('mouseout', function() {
-
-            // reset the layer style to its original stroke color
-            layer.setStyle({
-              color: '#dddddd'
-            });
-          });
+          layer.bindTooltip(feature.properties.Country_Name, {
+            sticky: true,
+            interactive: true
+          })
         }
       }).addTo(map)
     }
@@ -325,16 +319,16 @@
       L.control.layers(layerControl, {
         // collapsed: true
       }).addTo(map);
-      // $("#ui input").change(function() {
-      //   var selection = this.value
-      //   if(selection === 'gdp') {
-      //     map.removeLayer(flowLayer)
-      //     map.addLayer(gdpLayer)
-      //   } else {
-      //     map.removeLayer(gdpLayer)
-      //     map.addLayer(flowLayer)
-      //   }
-      // })
+      $("#ui input").change(function() {
+        var selection = this.value
+        if(selection === 'gdp') {
+          map.removeLayer(flowLayer)
+          map.addLayer(gdpLayer)
+        } else {
+          map.removeLayer(gdpLayer)
+          map.addLayer(flowLayer)
+        }
+      })
     }
 
     //   var mygallery = new simpleGallery({
