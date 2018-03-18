@@ -23,6 +23,7 @@
   // layer source code
   var canvasRenderer = L.canvas();
 
+
   var CanvasFlowmapLayer = L.GeoJSON.extend({
     options: {
       // this is only a default option example,
@@ -99,7 +100,7 @@
             weight: 1,
             color: 'rgb(195, 255, 62)',
             fillColor: 'rgba(195, 255, 62, 0.6)',
-            fillOpacity: 0.6
+            fillOpacity: 0.6,
           };
         } else {
           return {
