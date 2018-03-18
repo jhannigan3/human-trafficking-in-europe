@@ -65,16 +65,15 @@
       border-radius: 50%;
     }
 
-    hr.small,
-    hr.large {
-      width: 83px;
-      position: absolute;
-      top: -8px;
-      left: 55px;
-      border: 1px dashed #ccc;
-      /* overwrite assembly.css rule */
-      margin-top: 8px;
-      /* overwrite assembly.css rule */
+    .legend circle {
+      fill: none;
+      stroke: #ccc;
+    }
+
+    .legend text {
+      fill: #777;
+      font: 10px sans-serif;
+      text-anchor: middle;
     }
   </style>
 </head>
@@ -82,16 +81,16 @@
 <body>
   <div id="side-col">
     <h1>Europe &amp; Human Trafficking</h1>
-    <h2>Click on a country to see which other countries in Europe that country trafficks to.</h2>
-    <p>More than 45.8 million people are in some form of modern slavery in 167 countries. <br>
-    Within Eurupe, there are currently 2,075,500 victims living in modern slavery due to trafficking. <br>
-    Countries like Luxembourg, Norway, Finland, Sweden, and Denmark have higher GDP's than most countries in Europe, and also exhibit very low numbers for trafficking victims.
-    The opposite is true of countries with lower GDP's; they are prone to many more trafficking victims due to poverty levels.</p>
-    <div class="your-class">
-      <div><img src ="images/branded.jpg"width= 370px, height= 200px</div>
-      <div></div>
+    <div>
+      <img src="images/Stop.jpg" width=370px, height=200px>
     </div>
-  </div>
+    <h2>Click on a country to see which other countries in Europe that country trafficks to.</h2>
+    <p>More than 45.8 million people are in some form of modern slavery in 167 countries. <br> Within Eurupe, there are currently 2,075,500 victims living in modern slavery due to trafficking. <br> Countries like Luxembourg, Norway, Finland, Sweden, and
+      Denmark have higher GDP's than most countries in Europe, and also exhibit very low numbers for trafficking victims. The opposite is true of countries with lower GDP's; they are prone to many more trafficking victims due to poverty levels.</p>
+    <div class="your-class">
+      <div><img src="images/Branded.jpg" width=370px, height=200px>
+      </div>
+    </div>
   </div>
 
   <div id="map"></div>
@@ -234,6 +233,7 @@
       // select RU first and show path
       flowLayer.selectFeaturesForPathDisplayById('origin_id', "RU", true, 'SELECTION_NEW');
     }
+    drawLegend(feature, ll)
 
     function drawGDPMap(data) {
       // create a new GeoJSON feature collection
@@ -272,23 +272,23 @@
             radius: calcRadius(feature.properties.Number_Slavery)
           })
         },
-  /*onEachFeature: function(feature, layer) {
-          layer.bindTooltip(feature.properties.County_Name);
-          // when mousing over a layer
-          layer.on('mouseover', function() {
-            // change the stroke color and bring that element to the front
-            layer.setStyle({
-              color: '#ff6e00'
-            }).bringToFront();
-          });
-          // on mousing off layer
-          layer.on('mouseout', function() {
-            // reset the layer style to its original stroke color
-            layer.setStyle({
-              color: '#dddddd'
-            });
-          });
-        }*/
+        /*onEachFeature: function(feature, layer) {
+                layer.bindTooltip(feature.properties.County_Name);
+                // when mousing over a layer
+                layer.on('mouseover', function() {
+                  // change the stroke color and bring that element to the front
+                  layer.setStyle({
+                    color: '#ff6e00'
+                  }).bringToFront();
+                });
+                // on mousing off layer
+                layer.on('mouseout', function() {
+                  // reset the layer style to its original stroke color
+                  layer.setStyle({
+                    color: '#dddddd'
+                  });
+                });
+              }*/
       }).addTo(map)
     }
 
@@ -307,153 +307,86 @@
       }).addTo(map);
 
 
-      function drawLegend(data) {
-        // loop through all features (i.e., the schools)
-        var dataValues = data.features.map(function(numbers) {
-          // for each grade in a school
-          for (var slavery in PopGDP.properties[Number_Slavery]) {
-            // shorthand to each value
-            var value = PopGDP.properties[GDP];
-            // if the value can be converted to a number
-            if (+value) {
-              //return the value to the array
-              return +value;
-            }
-            showLegend = true; // default value showing the legend
+      function drawLegend(feature, ll) {
 
-            var toggleLegend = function() {
-              if (showLegend === true) {
-                /* use jquery to select your DOM elements that has the class 'legend' */
-                $('.legend').hide();
-                showLegend = false;
-              } else {
-                $('.legend').show();
-                showLegend = true;
+        // append a new g element
+        var legend = feature.properties.Number_Slavery
+          .attr("dy", "1.3em") // adjust the vertical displacement
+          .attr("class", "legend") // add a class (for CSS)
+          .attr("transform", "translate(" + (width - 50) + "," + (height - 20) + ")")
+          .selectAll("g") // select all new g elements
+          .data([5e6, 2e7]) // apply two numbers (approx median/max)
+          .enter().append("g"); // enter and append the two new g elements
+
+        // place the circles vertically and apply radius
+        legend.append("circle")
+          .attr("cy", function(d) {
+            return -radius(d);
+          })
+          .attr("r", radius);
+
+        // append text to each
+        legend.append("text")
+          .attr("y", function(d) {
+            return -2 * radius(d);
+          })
+          .attr("dy", "1.3em")
+          .text(d3.format(".1s"));
+
+        // append a legend label at bottom
+        legend.append("text")
+          .attr("y", 16)
+          .text("metric tons")
+
+      } // end drawLegend()
+
+
+      /*  $(document).ready(function() {
+          $('.responsive').slick({
+            dots: true,
+            infinite: false,
+            speed: 300,
+            slidesToShow: 4,
+            slidesToScroll: 4,
+            responsive: [{
+                breakpoint: 1024,
+                settings: {
+                  slidesToShow: 3,
+                  slidesToScroll: 3,
+                  infinite: true,
+                  dots: true
+                }
+              },
+              {
+                breakpoint: 600,
+                settings: {
+                  slidesToShow: 2,
+                  slidesToScroll: 2
+                }
+              },
+              {
+                breakpoint: 480,
+                settings: {
+                  slidesToShow: 1,
+                  slidesToScroll: 1
+                }
               }
-            }
-
-          }
-        });
-        // verify your results!
-        console.log(dataValues);
-        // sort our array
-        var sortedValues = dataValues.sort(function(a, b) {
-          return b - a;
-        });
-
-        // round the highest number and use as our large circle diameter
-        var maxValue = Math.round(sortedValues[0] / 1000) * 1000;
-        // create Leaflet control for the legend
-        var legendControl = L.control({
-          position: 'bottomright'
-        });
-        // calc the diameters
-        var largeDiameter = calcRadius(maxValue) * 2,
-          smallDiameter = largeDiameter / 2;
-
-        // select our circles container and set the height
-        $(".legend-circles").css('height', largeDiameter.toFixed());
-
-        // set width and height for large circle
-        $('.legend-large').css({
-          'width': largeDiameter.toFixed(),
-          'height': largeDiameter.toFixed()
-        });
-        // set width and height for small circle and position
-        $('.legend-small').css({
-          'width': smallDiameter.toFixed(),
-          'height': smallDiameter.toFixed(),
-          'top': largeDiameter - smallDiameter,
-          'left': smallDiameter / 2
-        })
-
-        // label the max and median value
-        $(".legend-large-label").html(maxValue.toLocaleString());
-        $(".legend-small-label").html((maxValue / 2).toLocaleString());
-
-        // adjust the position of the large based on size of circle
-        $(".legend-large-label").css({
-          'top': -11,
-          'left': largeDiameter + 30,
-        });
-
-        // adjust the position of the large based on size of circle
-        $(".legend-small-label").css({
-          'top': smallDiameter - 11,
-          'left': largeDiameter + 30
-        });
-
-
-        // insert a couple hr elements and use to connect value label to top of each circle
-        $("<hr class='large'>").insertBefore(".legend-large-label")
-        $("<hr class='small'>").insertBefore(".legend-small-label").css('top', largeDiameter - smallDiameter - 8);
-
-        // when the control is added to the map
-        legendControl.onAdd = function(map) {
-
-          // select the legend using id attribute of legend
-          var legend = L.DomUtil.get("legend");
-
-          // disable scroll and click functionality
-          L.DomEvent.disableScrollPropagation(legend);
-          L.DomEvent.disableClickPropagation(legend);
-
-          // return the selection
-          return legend;
-
-        }
-
-
-        legendControl.addTo(map);
-      }
-
-
-    /*  $(document).ready(function() {
-        $('.responsive').slick({
-          dots: true,
-          infinite: false,
-          speed: 300,
-          slidesToShow: 4,
-          slidesToScroll: 4,
-          responsive: [{
-              breakpoint: 1024,
-              settings: {
-                slidesToShow: 3,
-                slidesToScroll: 3,
-                infinite: true,
-                dots: true
-              }
-            },
-            {
-              breakpoint: 600,
-              settings: {
-                slidesToShow: 2,
-                slidesToScroll: 2
-              }
-            },
-            {
-              breakpoint: 480,
-              settings: {
-                slidesToShow: 1,
-                slidesToScroll: 1
-              }
-            }
-            // You can unslick at a given breakpoint now by adding:
-            // settings: "unslick"
-            // instead of a settings object
-          ]
-        });
-      });;
-      // $("#ui input").change(function() {
-      //   var selection = this.value
-      //   if(selection === 'gdp') {
-      //     map.removeLayer(flowLayer)
-      //     map.addLayer(gdpLayer)
-      //   } else {
-      //     map.removeLayer(gdpLayer)
-      //     map.addLayer(flowLayer)
-      //   }
-      // })*/
+              // You can unslick at a given breakpoint now by adding:
+              // settings: "unslick"
+              // instead of a settings object
+            ]
+          });
+        });;
+        // $("#ui input").change(function() {
+        //   var selection = this.value
+        //   if(selection === 'gdp') {
+        //     map.removeLayer(flowLayer)
+        //     map.addLayer(gdpLayer)
+        //   } else {
+        //     map.removeLayer(gdpLayer)
+        //     map.addLayer(flowLayer)
+        //   }
+        // })*/
     }
   </script>
 </body>
