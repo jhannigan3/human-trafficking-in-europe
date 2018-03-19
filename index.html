@@ -26,12 +26,18 @@
     }
 
     h1 {
-      font-size: 1.5em;
+      font-size: 1.6em;
       font-family: 'Berkshire Swash', cursive;
+      text-align: center;
     }
 
     h2 {
       font-size: 1.3em;
+      text-align: center;
+    }
+    h7 {
+      font-size: 1.4em;
+      font-family: 'Berkshire Swash', cursive;
     }
 
     #side-col {
@@ -272,7 +278,18 @@
             fillOpacity: 0,
             radius: calcRadius(feature.properties.GDP)
           })
-        }
+        },
+        onEachFeature: function(feature, layer) {
+                layer.bindTooltip("<h7>" + feature.properties.Country_Name + "</h7>" + "<br>" + "Number of Victims: " + "<b>" + feature.properties.Number_Slavery + "</b><br>" + "GPD PPP: " + "<b>" + feature.properties.GDP);
+                // when mousing over a layer
+                layer.on('mouseover', function() {
+                  // change the stroke color and bring that element to the front
+                });
+                // on mousing off layer
+                layer.on('mouseout', function() {
+                  // reset the layer style to its original stroke color
+                });
+              }
       }).addTo(map)
       L.geoJson(geojson, {
         pointToLayer: function(feature, ll) {
@@ -283,23 +300,17 @@
             radius: calcRadius(feature.properties.Number_Slavery)
           })
         },
-        /*onEachFeature: function(feature, layer) {
-                layer.bindTooltip(feature.properties.County_Name);
+        onEachFeature: function(feature, layer) {
+                layer.bindTooltip("<h7>" + feature.properties.Country_Name + "</h7>" + "<br>" +  "Number of Victims: " + "<b>" + feature.properties.Number_Slavery + "</b><br>" + "GPD PPP: " + "<b>" + feature.properties.GDP);
                 // when mousing over a layer
                 layer.on('mouseover', function() {
                   // change the stroke color and bring that element to the front
-                  layer.setStyle({
-                    color: '#ff6e00'
-                  }).bringToFront();
                 });
                 // on mousing off layer
                 layer.on('mouseout', function() {
                   // reset the layer style to its original stroke color
-                  layer.setStyle({
-                    color: '#dddddd'
-                  });
                 });
-              }*/
+              }
       }).addTo(map)
     }
 
