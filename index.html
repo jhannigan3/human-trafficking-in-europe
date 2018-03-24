@@ -43,7 +43,7 @@
       width: 30%;
       background: #333;
       z-index: 999;*/
-      position: absolute;
+      position: relative;
       width: 30%;
       left: 18px;
       top: 15px;
@@ -54,18 +54,17 @@
       padding: 18px 12px;
     }
 
-    /*  #legend {
+  #legend {
       position: absolute;
-      width: 14%;
-      left: 1300px;
-      top: 750px;
-      bottom: 60px;
-      background: #333;
+      width: 15%;
+      left: 500px;
+      top: 25px;
+      bottom: 775px;
       z-index: 999;
       padding: 25px 5px;
-    }*/
+    }
 
-    .legend-large,
+    /*  .legend-large,
     .legend-small {
       border-radius: 50%;
     }
@@ -78,7 +77,7 @@
       left: 55px;
       border: 1px dashed #ccc;
       margin-top: 8px;
-    }
+    } */
 
     #map {
       position: absolute;
@@ -90,6 +89,7 @@
 </head>
 
 <body>
+
   <div id="side-col">
     <!---<h1>Europe &amp; Human Trafficking</h1>--->
     <h1>More than 45.8 million people are in some form of modern slavery in 167 countries throughout the world.</h1>
@@ -120,11 +120,11 @@
         </ul>
   </div>
 
-  <!---  <div id="legend">
+ <div id="legend">
     <img src="images/Legend.jpg" width=215px, height=115px>
-  </div> ---->
+  </div>
 
-  <div id='legend' class='bg-gray-dark round px12 py12 relative'>
+<!---  <div id='legend' class='bg-gray-dark round px12 py12 relative'>
     <h3 class='txt-bold mb12 w180'>Number of <span style="color: #FF0000">trafficking victims</span> and <span style="color: #00FFFF">GDP</span>by county</h3>
     <div class='legend-circles relative w180'>
       <div class="legend-large border border--gray-light absolute"></div>
@@ -132,7 +132,7 @@
       <h3><div class="legend-large-label txt-m absolute"></div></h3>
       <h3><div class="legend-small-label txt-m absolute"></div></h3>
     </div>
-  </div>
+  </div>   ---->
 
   <div id="map"></div>
 
