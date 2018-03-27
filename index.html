@@ -169,12 +169,12 @@
       zoomControl: false
     }
     var map = L.map('map', options)
-    
+
     L.tileLayer(
         'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
           // attribute here
         }).addTo(map)
-    
+
     L.control.zoom({
       position: 'topright'
     }).addTo(map);
@@ -182,7 +182,7 @@
     // load CSV data
     var trafficData = d3.csv('data/Trafficking_Europe.csv')
     var gdpData = d3.csv('data/PopGDP.csv')
-    
+
     Promise.all([trafficData, gdpData]).then(dataReady)
 
     function dataReady(data) {
@@ -193,7 +193,7 @@
     }
 
 
-    
+
     function drawFlowMap(data) {
       // create a new GeoJSON feature collection
       var geojson = {
@@ -251,7 +251,7 @@
         animationEasingType: 'In',
         animationDuration: 2000
       }).addTo(map)
-      
+
       flowLayer.on('click', function (e) {
         if (e.sharedOriginFeatures.length) {
           flowLayer.selectFeaturesForPathDisplay(e.sharedOriginFeatures, 'SELECTION_NEW');
@@ -270,7 +270,7 @@
         "type": "FeatureCollection",
         "features": []
       }
-      
+
       data.forEach(function (datum) {
         // create a new Point feature
         var feature = {
@@ -283,7 +283,7 @@
         }
         geojson.features.push(feature);
       }) // end forEach loop
-      
+
       var gdpLayer = L.geoJson(geojson, {
         pointToLayer: function (feature, ll) {
           return L.circleMarker(ll, {
@@ -292,9 +292,15 @@
             fillOpacity: 0,
             radius: calcRadius(feature.properties.GDP)
           })
+        },
+        onEachFeature: function (feature, layer) {
+
+          layer.bindTooltip("<h7>" + feature.properties.Country_Name + "</h7>" + "<br>" + "Number of Victims: " +
+            "<b>" + Number(feature.properties.Number_Slavery).toLocaleString() + "</b><br>" + "GPD PPP: " + "<b>$" + Number(feature.properties.GDP).toLocaleString() + " USD"
+          );
         }
       }).addTo(map)
-      
+
       L.geoJson(geojson, {
         pointToLayer: function (feature, ll) {
           return L.circleMarker(ll, {
@@ -305,7 +311,7 @@
           })
         },
         onEachFeature: function (feature, layer) {
-         
+
           layer.bindTooltip("<h7>" + feature.properties.Country_Name + "</h7>" + "<br>" + "Number of Victims: " +
             "<b>" + Number(feature.properties.Number_Slavery).toLocaleString() + "</b><br>" + "GPD PPP: " + "<b>$" + Number(feature.properties.GDP).toLocaleString() + " USD"
           );
