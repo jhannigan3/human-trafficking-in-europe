@@ -62,7 +62,7 @@
       padding: 18px 12px;
     }
 
-  #legend {
+    #legend {
       position: absolute;
       width: 200px;
       left: 410px;
@@ -105,41 +105,44 @@
     </div>
     <h2>Each line represents the flow of trafficking, from the origin country to the destination country.</h2>
     <div>
-      <div><img src="images/blend1.jpg" width=345px, height=100px>
+      <div>
+        <img src="images/blend1.jpg" width=345px, height=100px>
         <br>
         <img src="images/blend2.jpg" width=345px, height=100px>
       </div>
     </div>
     <p>
-      Within Europe, there are currently 2,075,500 victims living in modern slavery due to trafficking. <br> Countries like Luxembourg, Norway, Finland, Sweden, and Denmark have higher GDP's than most countries in Europe, and also exhibit very low numbers
-      for trafficking victims. The opposite is true of countries with lower GDP's; they are prone to many more trafficking victims due to poverty levels. This can primarily be seen throughout Eastern Europe, where trafficking has increased tremendously
-      over the past couple of decades, following the collapse of the Soviet Union.
+      Within Europe, there are currently 2,075,500 victims living in modern slavery due to trafficking.
+      <br> Countries like Luxembourg, Norway, Finland, Sweden, and Denmark have higher GDP's than most countries in Europe, and
+      also exhibit very low numbers for trafficking victims. The opposite is true of countries with lower GDP's; they are
+      prone to many more trafficking victims due to poverty levels. This can primarily be seen throughout Eastern Europe,
+      where trafficking has increased tremendously over the past couple of decades, following the collapse of the Soviet
+      Union.
     </p>
     <ul>
       <br>
       <li>Map authored by: Jillian Hannigan</li>
-      <li class=" mr-2"><i class="fa fa-github mr-2"></i> <a href="https://github.com/jhannigan3?tab=overview&from=2017-12-01&to=2017-12-31">Personal Github</a></li>
+      <li class=" mr-2">
+        <i class="fa fa-github mr-2"></i>
+        <a href="https://github.com/jhannigan3?tab=overview&from=2017-12-01&to=2017-12-31">Personal Github</a>
+      </li>
       <li>Created: March 17, 2018</li>
       <li>Data sources:
         <ul>
-          <li>Global Slavery Index <br><a target="_blank" href="#">https://www.globalslaveryindex.org/region/europe/</a></li>
-          <li>US 2017 TIP Report <br><a target="_blank" href="#">https://www.state.gov/j/tip/rls/tiprpt/index.htm</a></li>
+          <li>Global Slavery Index
+            <br>
+            <a target="_blank" href="#">https://www.globalslaveryindex.org/region/europe/</a>
+          </li>
+          <li>US 2017 TIP Report
+            <br>
+            <a target="_blank" href="#">https://www.state.gov/j/tip/rls/tiprpt/index.htm</a>
+          </li>
         </ul>
   </div>
 
- <div id="legend">
+  <div id="legend">
     <img src="images/newlegend.jpg" width=235px, height=180px>
   </div>
-
-<!---  <div id='legend' class='bg-gray-dark round px12 py12 relative'>
-    <h3 class='txt-bold mb12 w180'>Number of <span style="color: #FF0000">trafficking victims</span> and <span style="color: #00FFFF">GDP</span>by county</h3>
-    <div class='legend-circles relative w180'>
-      <div class="legend-large border bordergray: -light absolute"></div>
-      <div class="legend-small border border: gray-light absolute"></div>
-      <h3><div class="legend-large-label txt-m absolute"></div></h3>
-      <h3><div class="legend-small-label txt-m absolute"></div></h3>
-    </div>
-  </div>   ---->
 
   <div id="map"></div>
 
@@ -163,35 +166,34 @@
       zoom: 4,
       minZoom: 3,
       maxZoom: 7,
+      zoomControl: false
     }
     var map = L.map('map', options)
-    var OpenStreetMap_Mapnik = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
-        // attribute here
-      })
-      .addTo(map)
+    
+    L.tileLayer(
+        'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
+          // attribute here
+        }).addTo(map)
+    
     L.control.zoom({
       position: 'topright'
     }).addTo(map);
-    var flowLayer,
-      gdpLayer
-    var layerMap = {
-      gdp: gdpLayer,
-      flow: flowLayer
-    };
+
     // load CSV data
     var trafficData = d3.csv('data/Trafficking_Europe.csv')
     var gdpData = d3.csv('data/PopGDP.csv')
+    
     Promise.all([trafficData, gdpData]).then(dataReady)
 
     function dataReady(data) {
-      var trafficData = data[0],
-        gdpData = data[1]
-      drawGDPMap(gdpData)
-      drawFlowMap(trafficData)
-      // makeUI()
+
+      drawGDPMap(data[1])
+      drawFlowMap(data[0])
+
     }
 
-    drawLegend(data); // add this statement
+
+    
     function drawFlowMap(data) {
       // create a new GeoJSON feature collection
       var geojson = {
@@ -199,7 +201,7 @@
         "features": []
       }
       // loop through the CSV data to build GeoJSON
-      data.forEach(function(datum) {
+      data.forEach(function (datum) {
         // create a new Point feature
         var feature = {
           "type": "Feature",
@@ -223,8 +225,8 @@
       })
 
       // L.geoJson(geojson).addTo(map)
-      flowLayer = L.canvasFlowmapLayer(geojson, {
-        style: function(feature) {
+      var flowLayer = L.canvasFlowmapLayer(geojson, {
+        style: function (feature) {
           return {
             weight: feature.properties.weight * .2,
             fillOpacity: 0
@@ -249,7 +251,8 @@
         animationEasingType: 'In',
         animationDuration: 2000
       }).addTo(map)
-      flowLayer.on('click', function(e) {
+      
+      flowLayer.on('click', function (e) {
         if (e.sharedOriginFeatures.length) {
           flowLayer.selectFeaturesForPathDisplay(e.sharedOriginFeatures, 'SELECTION_NEW');
         }
@@ -267,7 +270,8 @@
         "type": "FeatureCollection",
         "features": []
       }
-      data.forEach(function(datum) {
+      
+      data.forEach(function (datum) {
         // create a new Point feature
         var feature = {
           "type": "Feature",
@@ -279,25 +283,20 @@
         }
         geojson.features.push(feature);
       }) // end forEach loop
-      gdpLayer = L.geoJson(geojson, {
-        pointToLayer: function(feature, ll) {
+      
+      var gdpLayer = L.geoJson(geojson, {
+        pointToLayer: function (feature, ll) {
           return L.circleMarker(ll, {
             color: "cyan",
             weight: 1,
             fillOpacity: 0,
             radius: calcRadius(feature.properties.GDP)
           })
-        },
-        onEachFeature: function(feature, layer) {
-          layer.bindTooltip("<h7>" + feature.properties.Country_Name + "</h7>" + "<br>" + "Number of Victims: " + "<b>" + feature.properties.Number_Slavery + "</b><br>" + "GPD PPP: " + "<b>" + feature.properties.GDP);
-          // when mousing over a layer
-          layer.on('mouseover', function() {});
-          // on mousing off layer
-          layer.on('mouseout', function() {});
         }
       }).addTo(map)
+      
       L.geoJson(geojson, {
-        pointToLayer: function(feature, ll) {
+        pointToLayer: function (feature, ll) {
           return L.circleMarker(ll, {
             color: "red",
             weight: 1,
@@ -305,12 +304,11 @@
             radius: calcRadius(feature.properties.Number_Slavery)
           })
         },
-        onEachFeature: function(feature, layer) {
-          layer.bindTooltip("<h7>" + feature.properties.Country_Name + "</h7>" + "<br>" + "Number of Victims: " + "<b>" + feature.properties.Number_Slavery + "</b><br>" + "GPD PPP: " + "<b>" + feature.properties.GDP);
-          // when mousing over a layer
-          layer.on('mouseover', function() {});
-          // on mousing off layer
-          layer.on('mouseout', function() {});
+        onEachFeature: function (feature, layer) {
+         
+          layer.bindTooltip("<h7>" + feature.properties.Country_Name + "</h7>" + "<br>" + "Number of Victims: " +
+            "<b>" + Number(feature.properties.Number_Slavery).toLocaleString() + "</b><br>" + "GPD PPP: " + "<b>$" + Number(feature.properties.GDP).toLocaleString() + " USD"
+          );
         }
       }).addTo(map)
     }
@@ -320,115 +318,6 @@
       return radius * .15;
     }
 
-    /*  function makeUI() {
-        var layerControl = {
-          "gdp": gdpLayer,
-          "flow": flowLayer
-        }
-        L.control.layers(layerControl, {
-          // collapsed: true
-        }).addTo(map);
-      }*/
-
-    function drawLegend(data) {
-      // loop through all features (i.e., the schools)
-      var dataValues = data.features.map(function(trafficking) {
-        // for each grade in a school
-        for (var slavery in PopGDP.properties) {
-          // shorthand to each value
-          var value = PopGDP.properties[Number_Slavery];
-          // if the value can be converted to a number
-          if (+value) {
-            //return the value to the array
-            return +value;
-          }
-          showLegend = true; // default value showing the legend
-
-          var toggleLegend = function() {
-            if (showLegend === true) {
-              /* use jquery to select your DOM elements that has the class 'legend' */
-              $('.legend').hide();
-              showLegend = false;
-            } else {
-              $('.legend').show();
-              showLegend = true;
-            }
-          }
-
-        }
-      });
-      // verify your results!
-      console.log(dataValues);
-      // sort our array
-      var sortedValues = dataValues.sort(function(a, b) {
-        return b - a;
-      });
-
-      // round the highest number and use as our large circle diameter
-      var maxValue = Math.round(sortedValues[0] / 1000) * 1000;
-      // create Leaflet control for the legend
-      var legendControl = L.control({
-        position: 'bottomright'
-      });
-      // calc the diameters
-      var largeDiameter = calcRadius(maxValue) * 2,
-        smallDiameter = largeDiameter / 2;
-
-      // select our circles container and set the height
-      $(".legend-circles").css('height', largeDiameter.toFixed());
-
-      // set width and height for large circle
-      $('.legend-large').css({
-        'width': largeDiameter.toFixed(),
-        'height': largeDiameter.toFixed()
-      });
-      // set width and height for small circle and position
-      $('.legend-small').css({
-        'width': smallDiameter.toFixed(),
-        'height': smallDiameter.toFixed(),
-        'top': largeDiameter - smallDiameter,
-        'left': smallDiameter / 2
-      })
-
-      // label the max and median value
-      $(".legend-large-label").html(maxValue.toLocaleString());
-      $(".legend-small-label").html((maxValue / 2).toLocaleString());
-
-      // adjust the position of the large based on size of circle
-      $(".legend-large-label").css({
-        'top': -11,
-        'left': largeDiameter + 30,
-      });
-
-      // adjust the position of the large based on size of circle
-      $(".legend-small-label").css({
-        'top': smallDiameter - 11,
-        'left': largeDiameter + 30
-      });
-
-
-      // insert a couple hr elements and use to connect value label to top of each circle
-      $("<hr class='large'>").insertBefore(".legend-large-label")
-      $("<hr class='small'>").insertBefore(".legend-small-label").css('top', largeDiameter - smallDiameter - 8);
-
-      // when the control is added to the map
-      legendControl.onAdd = function(map) {
-
-        // select the legend using id attribute of legend
-        var legend = L.DomUtil.get("legend");
-
-        // disable scroll and click functionality
-        L.DomEvent.disableScrollPropagation(legend);
-        L.DomEvent.disableClickPropagation(legend);
-
-        // return the selection
-        return legend;
-
-      }
-
-
-      legendControl.addTo(map);
-    }
   </script>
 </body>
 
